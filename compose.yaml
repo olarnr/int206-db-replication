@@ -1,10 +1,10 @@
 services:
   master:
     image: mysql/mysql-server:8.0
-    env_file: env.list
+    env_file: ./config-files/env.list
     volumes:
-      - ./scripts:/docker-entrypoint-initdb.d
-      - ./master.cnf:/etc/my.cnf
+      - ./init-scripts:/docker-entrypoint-initdb.d
+      - ./config-files/master.cnf:/etc/my.cnf
       - master-datadir:/var/lib/mysql
     networks:
       db-replication:
@@ -15,9 +15,9 @@ services:
 
   slave:
     image: mysql/mysql-server:8.0
-    env_file: env.list
+    env_file: ./config-files/env.list
     volumes:
-      - ./slave.cnf:/etc/my.cnf 
+      - ./config-files/slave.cnf:/etc/my.cnf 
       - slave-datadir:/var/lib/mysql
     networks:
       db-replication:
