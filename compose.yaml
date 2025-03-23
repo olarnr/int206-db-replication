@@ -1,0 +1,37 @@
+services:
+  master:
+    image: mysql/mysql-server:8.0
+    env_file: env.list
+    volumes:
+      - ./scripts:/docker-entrypoint-initdb.d
+      - ./master.cnf:/etc/my.cnf
+      - master-datadir:/var/lib/mysql
+    networks:
+      db-replication:
+        ipv4_address: 172.16.0.2
+        aliases:
+          - master
+    restart: unless-stopped
+
+  slave:
+    image: mysql/mysql-server:8.0
+    env_file: env.list
+    volumes:
+      - ./slave.cnf:/etc/my.cnf 
+      - slave-datadir:/var/lib/mysql
+    networks:
+      db-replication:
+        ipv4_address: 172.16.0.3
+        aliases:
+          - slave
+    restart: unless-stopped
+
+networks:
+  db-replication:
+    ipam:
+       config:
+         - subnet: "172.16.0.0/24"
+
+volumes:
+  master-datadir:
+  slave-datadir:
